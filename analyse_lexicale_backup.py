@@ -4,56 +4,53 @@ from sly import Lexer
 
 class FloLexer(Lexer):
 	# Noms des lexèmes (sauf les litéraux). En majuscule. Ordre non important
-	tokens = { IDENTIFIANT, ENTIER, ECRIRE, LIRE, INFERIEUR_OU_EGAL, SI, SINON, EGAL, SUPERIEUR_OU_EGAL, ET, OU, NON, SINON_SI, RETOURNER, BOOLEEN, VRAI, FAUX, TANT_QUE, DIFFERENT}
+	tokens = { IDENTIFIANT, ENTIER, BOOLEEN, ET, OU, NON, SI, SINON, TANTQUE, RETOURNER, EGAL, DIFFERENT,
+		    INFERIEUR_OU_EGAL, SUPERIEUR_OU_EGAL, INFERIEUR, SUPERIEUR}
 
 	#Les caractères litéraux sont des caractères uniques qui sont retournés tel quel quand rencontré par l'analyse lexicale. 
 	#Les litéraux sont vérifiés en dernier, après toutes les autres règles définies par des expressions régulières.
 	#Donc, si une règle commence par un de ces littérals (comme INFERIEUR_OU_EGAL), cette règle aura la priorité.
-	literals = { '+','*','(',')',";","%"}
+	literals = { '+','-','*','/','%','(',')',";",'{','}',',','=' }
 	
 	# chaines contenant les caractère à ignorer. Ici espace et tabulation
 	ignore = ' \t'
 
 	# Expressions régulières correspondant au différents Lexèmes par ordre de priorité
-	INFERIEUR_OU_EGAL= r'<='
-	SUPERIEUR_OU_EGAL= r'>='
+	EGAL = r'='
 	DIFFERENT = r'!='
-	ET = r'&&'
-	OU = r'\|\|'
-	NON = r'!'
-	EGAL = r'=='
-
-
+	INFERIEUR_OU_EGAL= r'<='
+	SUPERIEUR_OU_EGAL = r'>='
+	INFERIEUR = r'<'
+	SUPERIEUR = r'>'
 	
 	@_(r'0|[1-9][0-9]*')
 	def ENTIER(self, t):
 		t.value = int(t.value)
 		return t
-
-    
+	
 	@_(r'Vrai|Faux')
-	def BOOLEEN(self, t):
-		if t.value == 'Vrai':
-			t.value = True
+	def BOOLEAN(self, t):
+		if(t.value=='Vrai'):
+			t=True
 		else:
-			t.value = False
+			t=False
 		return t
-	# cas général
+
+    # cas général
 	IDENTIFIANT = r'[a-zA-Z][a-zA-Z0-9_]*' #en général, variable ou nom de fonction
 
 	# cas spéciaux:
 	IDENTIFIANT['ecrire'] = ECRIRE
-	IDENTIFIANT['lire'] = LIRE
-	IDENTIFIANT['Vrai'] = VRAI
-	IDENTIFIANT['Faux'] = FAUX
+	IDENTIFIANT['entier'] = ENTIER
+	IDENTIFIANT['booleen'] = BOOLEAN
+	IDENTIFIANT['et'] = ET
+	IDENTIFIANT['ou'] = OU
+	IDENTIFIANT['non'] = NON
 	IDENTIFIANT['si'] = SI
 	IDENTIFIANT['sinon'] = SINON
-	IDENTIFIANT['sinon si'] = SINON_SI
+	IDENTIFIANT['tantque'] = TANTQUE
 	IDENTIFIANT['retourner'] = RETOURNER
-	IDENTIFIANT['tant que'] = TANT_QUE
 
-
-	
 	#Syntaxe des commentaires à ignorer
 	ignore_comment = r'\#.*'
 
