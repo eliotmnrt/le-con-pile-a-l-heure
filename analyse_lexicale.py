@@ -4,12 +4,13 @@ from sly import Lexer
 
 class FloLexer(Lexer):
 	# Noms des lexèmes (sauf les litéraux). En majuscule. Ordre non important
-	tokens = { IDENTIFIANT, ENTIER, ECRIRE, LIRE, INFERIEUR_OU_EGAL, SI, SINON, EGAL, SUPERIEUR_OU_EGAL, ET, OU, NON, SINON_SI, RETOURNER, BOOLEEN, VRAI, FAUX, TANT_QUE, DIFFERENT}
+	tokens = { IDENTIFIANT, ECRIRE, LIRE, VIRGULE, INFERIEUR_OU_EGAL, SI, SINON, EST_EGAL, SUPERIEUR_OU_EGAL,SUPERIEUR, INFERIEUR,
+	 ET, OU, SINON_SI, RETOURNER, BOOLEAN, VRAI, FAUX, TANT_QUE, DIFFERENT}
 
 	#Les caractères litéraux sont des caractères uniques qui sont retournés tel quel quand rencontré par l'analyse lexicale. 
 	#Les litéraux sont vérifiés en dernier, après toutes les autres règles définies par des expressions régulières.
 	#Donc, si une règle commence par un de ces littérals (comme INFERIEUR_OU_EGAL), cette règle aura la priorité.
-	literals = { '+','*','(',')',";","%"}
+	literals = { '+','-', '/','*','(',')',";","%",",",'{', "}", '>', '<', '=', '!'}
 	
 	# chaines contenant les caractère à ignorer. Ici espace et tabulation
 	ignore = ' \t'
@@ -20,8 +21,7 @@ class FloLexer(Lexer):
 	DIFFERENT = r'!='
 	ET = r'&&'
 	OU = r'\|\|'
-	NON = r'!'
-	EGAL = r'=='
+	EST_EGAL = r'=='
 
 
 	
@@ -32,12 +32,15 @@ class FloLexer(Lexer):
 
     
 	@_(r'Vrai|Faux')
-	def BOOLEEN(self, t):
+	def BOOLEAN(self, t):
 		if t.value == 'Vrai':
 			t.value = True
 		else:
 			t.value = False
 		return t
+
+
+
 	# cas général
 	IDENTIFIANT = r'[a-zA-Z][a-zA-Z0-9_]*' #en général, variable ou nom de fonction
 
@@ -51,6 +54,7 @@ class FloLexer(Lexer):
 	IDENTIFIANT['sinon si'] = SINON_SI
 	IDENTIFIANT['retourner'] = RETOURNER
 	IDENTIFIANT['tant que'] = TANT_QUE
+	IDENTIFIANT[','] = VIRGULE
 
 
 	
